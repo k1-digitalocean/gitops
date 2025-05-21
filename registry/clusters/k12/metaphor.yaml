@@ -1,0 +1,46 @@
+# host name are hardcoded for now. Future overrride should
+# be stored/referenced inside customers Gitops repo.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: k1-digitalocean-metaphor-k12
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+  annotations:
+    argocd.argoproj.io/sync-wave: '10'
+spec:
+  project: default
+  source:
+    repoURL: 555935582951.dkr.ecr.us-west-2.amazonaws.com/charts/k1-digitalocean/metaphor
+    chart: k1-digitalocean-metaphor
+    targetRevision: None
+    helm:
+      values: |-
+        k1-digitalocean-metaphor:
+          image:
+            repository: 555935582951.dkr.ecr.us-west-2.amazonaws.com/k1-digitalocean-metaphor
+          ingress:
+            className: nginx
+            enabled: true
+            annotations:
+              nginx.ingress.kubernetes.io/service-upstream: "true"
+              cert-manager.io/issuer: letsencrypt-prod
+            hosts:
+              - host: k1-digitalocean-metaphor-k12.gitopsmagic.com
+                paths:
+                  - path: /
+                    pathType: Prefix
+            tls:
+              - secretName: k1-digitalocean-metaphor-tls
+                hosts:
+                  - k1-digitalocean-metaphor-k12.gitopsmagic.com
+  destination:
+    name: k12
+    namespace: kubefirst
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
