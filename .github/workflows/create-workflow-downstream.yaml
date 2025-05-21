@@ -5,7 +5,7 @@
 name: Create downstream workflow
 
 env:
-  AWS_REGION: ap-south-1
+  AWS_REGION: us-west-2
 
 on:
   workflow_dispatch:
@@ -23,9 +23,9 @@ jobs:
   copy-workflow-downstream:
     runs-on: ubuntu-latest
     env:
-      CLUSTER_NAME: $inputs.cluster_name
-      APP_NAME: $inputs.app_name
-      ASSUME_ROLE_ARN: $inputs.role_arn
+      CLUSTER_NAME: ${{ inputs.cluster_name }}
+      APP_NAME: ${{ inputs.app_name }}
+      ASSUME_ROLE_ARN: ${{ inputs.role_arn }}
     steps:
       - name: Checkout gitops repository
         uses: actions/checkout@v4
@@ -35,9 +35,9 @@ jobs:
       - name: Checkout app repository
         uses: actions/checkout@v4
         with:
-          repository: $inputs.app_name
+          repository: ${{ inputs.app_name }}
           path: app
-          token: $secrets.KBOT_TOKEN
+          token: ${{ secrets.KBOT_TOKEN }}
 
       - name: create chart and github workflows
         run: |
@@ -49,7 +49,7 @@ jobs:
             echo "directory $DIR exists skipping helm chart creation"
           else
             echo "directory $DIR does not exist. Creating now..."
-            mkdir -p "$DIR"
+            mkdir -p "$DIR/$APP_NAME"
             cd "$DIR"
             helm create $APP_NAME
             cd ..
@@ -63,13 +63,13 @@ jobs:
           sed "s#{appName}#$APP_NAME#g" -i .github/workflows/publish.yaml
           
           echo "replace region and roleARN in publish.yaml"
-          sed "s/{region}/$AWS_REGION/g" -i .github/workflows/publish.yaml
-          sed "s/{roleARN}/$ASSUME_ROLE_ARN/g" -i .github/workflows/publish.yaml
+          sed "s#{region}#$AWS_REGION#g" -i .github/workflows/publish.yaml
+          sed "s#{roleARN}#$ASSUME_ROLE_ARN#g" -i .github/workflows/publish.yaml
 
       - name: Commit and push changes
         env:
-          GITHUB_TOKEN: $secrets.KBOT_TOKEN
-          APP_NAME: $inputs.app_name
+          GITHUB_TOKEN: ${{ secrets.KBOT_TOKEN }}
+          APP_NAME: ${{ inputs.app_name }}
         run: |
           cd ./app
           git config user.name "kubefirst-demo-bot"
