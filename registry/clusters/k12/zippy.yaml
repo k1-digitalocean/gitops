@@ -12,7 +12,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: 555935582951.dkr.ecr.us-west-2.amazonaws.com/k1-digitalocean/charts/zippy
+    repoURL: 555935582951.dkr.ecr.us-west-2.amazonaws.com/k1-digitalocean/charts
     chart: zippy
     targetRevision: 0.1.0-rc.aab9696
     helm:
