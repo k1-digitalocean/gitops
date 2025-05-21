@@ -12,14 +12,14 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: 555935582951.dkr.ecr.us-west-2.amazonaws.com/charts/k1-digitalocean/zippy
+    repoURL: 555935582951.dkr.ecr.us-west-2.amazonaws.com/k1-digitalocean/charts/zippy
     chart: k1-digitalocean-zippy
     targetRevision: None
     helm:
       values: |-
         k1-digitalocean-zippy:
           image:
-            repository: 555935582951.dkr.ecr.us-west-2.amazonaws.com/k1-digitalocean-zippy
+            repository: 555935582951.dkr.ecr.us-west-2.amazonaws.com/k1-digitalocean/zippy
           ingress:
             className: nginx
             enabled: true
