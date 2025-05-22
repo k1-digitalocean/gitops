@@ -29,15 +29,15 @@ jobs:
       id-token: write
       contents: write
     env:
-      CLUSTER_NAME : ${{ inputs.cluster_name }}
-      APP_NAME : ${{ inputs.app_name }}
-      ASSUME_ROLE_ARN: ${{ inputs.role_arn }}
+      CLUSTER_NAME : ${{inputs.cluster_name}}
+      APP_NAME : ${{inputs.app_name}}
+      ASSUME_ROLE_ARN: ${{inputs.role_arn}}
     steps:
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502
         with:
-          role-to-assume: ${{ env.ASSUME_ROLE_ARN }}
-          aws-region: ${{ env.AWS_REGION }}
+          role-to-assume: ${{env.ASSUME_ROLE_ARN}}
+          aws-region: ${{"env.AWS_REGION"}}
 
       - name: Login to Amazon ECR
         id: login-ecr
@@ -96,4 +96,3 @@ jobs:
           git add --all
           git commit -m "[skip-ci] add $APP_NAME in $CLUSTER_NAME" || echo "No changes to commit"
           git push origin HEAD
-
